@@ -282,11 +282,11 @@ void StudentTextEditor::undo()
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
-		(*it)->erase(m_col - m_count, m_count);
+		(*it)->erase(col - 1, m_count);
 		m_col = col - 1;
 		m_row = row;
 	}
-	if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::INSERT)
+	else if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::INSERT)
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
@@ -294,7 +294,7 @@ void StudentTextEditor::undo()
 		m_col = col;
 		m_row = row;
 	}
-	if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::JOIN)
+	else if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::JOIN)
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
@@ -305,7 +305,7 @@ void StudentTextEditor::undo()
 		m_col = col;
 		m_row = row;
 	}
-	if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::SPLIT)
+	else if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::SPLIT)
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
