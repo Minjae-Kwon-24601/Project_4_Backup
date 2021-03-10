@@ -35,28 +35,35 @@ void StudentUndo::submit(const Action action, int row, int col, char ch)
 				stack_of_undos.top()->m_count++;
 			}
 		}
-		if (action == Action::DELETE)
+		else if (action == Action::DELETE)
 		{
-			if (col_check == col || col_check == (col - 1))
+			if ((col_check == col || col_check == (col - 1)) && action_check == Action::DELETE)
 			{
-				if (action_check == Action::DELETE)
-				{
-					stack_of_undos.top()->m_action.push(action);
-					stack_of_undos.top()->m_col.push(col);
-					stack_of_undos.top()->m_row.push(row);
-					stack_of_undos.top()->m_ch.push(ch);
-					stack_of_undos.top()->m_count++;
-				}
-				else
-				{
+
+				stack_of_undos.top()->m_action.push(action);
+				stack_of_undos.top()->m_col.push(col);
+				stack_of_undos.top()->m_row.push(row);
+				stack_of_undos.top()->m_ch.push(ch);
+				stack_of_undos.top()->m_count++;
+			}
+			else
+			{
 					stack_of_undos.push(new UndoInfo);						// otherwise create a new UndoInfo struct that holds the relevant information
 					stack_of_undos.top()->m_action.push(action);
 					stack_of_undos.top()->m_col.push(col);
 					stack_of_undos.top()->m_row.push(row);
 					stack_of_undos.top()->m_ch.push(ch);
 					stack_of_undos.top()->m_count++;
-				}
 			}
+		}
+		else
+		{
+			stack_of_undos.push(new UndoInfo);						// otherwise create a new UndoInfo struct that holds the relevant information
+			stack_of_undos.top()->m_action.push(action);
+			stack_of_undos.top()->m_col.push(col);
+			stack_of_undos.top()->m_row.push(row);
+			stack_of_undos.top()->m_ch.push(ch);
+			stack_of_undos.top()->m_count++;
 		}
 	}
 	else
@@ -159,6 +166,16 @@ void StudentUndo::clear()
 		delete stack_of_undos.top();
 		stack_of_undos.pop();				
 	}
+}
+
+void StudentUndo::createNewUndo(stack<UndoInfo*>& undos, const Action action, int row, int col, char ch)
+{
+	undos.push(new UndoInfo);						// otherwise create a new UndoInfo struct that holds the relevant information
+	undos.top()->m_action.push(action);
+	undos.top()->m_col.push(col);
+	undos.top()->m_row.push(row);
+	undos.top()->m_ch.push(ch);
+	undos.top()->m_count++;
 }
 
 int StudentUndo::getRow(stack<UndoInfo*>& undos)
