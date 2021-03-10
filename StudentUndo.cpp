@@ -26,14 +26,7 @@ void StudentUndo::submit(const Action action, int row, int col, char ch)
 				stack_of_undos.top()->m_count++;
 			}
 			else
-			{
-				stack_of_undos.push(new UndoInfo);						// otherwise create a new UndoInfo struct that holds the relevant information
-				stack_of_undos.top()->m_action.push(action);
-				stack_of_undos.top()->m_col.push(col);
-				stack_of_undos.top()->m_row.push(row);
-				stack_of_undos.top()->m_ch.push(ch);
-				stack_of_undos.top()->m_count++;
-			}
+				createNewUndo(stack_of_undos, action, row, col, ch);
 		}
 		else if (action == Action::DELETE)
 		{
@@ -47,34 +40,13 @@ void StudentUndo::submit(const Action action, int row, int col, char ch)
 				stack_of_undos.top()->m_count++;
 			}
 			else
-			{
-					stack_of_undos.push(new UndoInfo);						// otherwise create a new UndoInfo struct that holds the relevant information
-					stack_of_undos.top()->m_action.push(action);
-					stack_of_undos.top()->m_col.push(col);
-					stack_of_undos.top()->m_row.push(row);
-					stack_of_undos.top()->m_ch.push(ch);
-					stack_of_undos.top()->m_count++;
-			}
+				createNewUndo(stack_of_undos, action, row, col, ch);
 		}
 		else
-		{
-			stack_of_undos.push(new UndoInfo);						// otherwise create a new UndoInfo struct that holds the relevant information
-			stack_of_undos.top()->m_action.push(action);
-			stack_of_undos.top()->m_col.push(col);
-			stack_of_undos.top()->m_row.push(row);
-			stack_of_undos.top()->m_ch.push(ch);
-			stack_of_undos.top()->m_count++;
-		}
+			createNewUndo(stack_of_undos, action, row, col, ch);
 	}
 	else
-	{
-		stack_of_undos.push(new UndoInfo);						// otherwise create a new UndoInfo struct that holds the relevant information
-		stack_of_undos.top()->m_action.push(action);
-		stack_of_undos.top()->m_col.push(col);
-		stack_of_undos.top()->m_row.push(row);
-		stack_of_undos.top()->m_ch.push(ch);
-		stack_of_undos.top()->m_count++;
-	}
+		createNewUndo(stack_of_undos, action, row, col, ch);
 }
 
 // retrieves the lastest operation performed that can be undone
@@ -170,7 +142,7 @@ void StudentUndo::clear()
 
 void StudentUndo::createNewUndo(stack<UndoInfo*>& undos, const Action action, int row, int col, char ch)
 {
-	undos.push(new UndoInfo);						// otherwise create a new UndoInfo struct that holds the relevant information
+	undos.push(new UndoInfo);						// create a new UndoInfo struct that holds the relevant information
 	undos.top()->m_action.push(action);
 	undos.top()->m_col.push(col);
 	undos.top()->m_row.push(row);
