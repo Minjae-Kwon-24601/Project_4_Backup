@@ -93,29 +93,23 @@ StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string
 		return Action::DELETE;
 	}
 
-	if (stack_of_undos.top()->m_action.top() == Action::DELETE)
+if (stack_of_undos.top()->m_action.top() == Action::DELETE)
 	{
 		row = getRow(stack_of_undos);
-		row = getRow(stack_of_undos);
-		if (stack_of_undos.top()->m_ch.top() == '\t')
-		{
-			count += 3;
-			col = getCol(stack_of_undos) - 4;
-		}
+		col = getCol(stack_of_undos);
+		if (stack_of_undos.top()->m_count == 1)
+			text += getCh(stack_of_undos);
 		else
-			col = getCol(stack_of_undos) - 1;
-		
-		if (stack_of_undos.top()->m_count != 1)
 		{
 			count = stack_of_undos.top()->m_count;
 			int temp_count = stack_of_undos.top()->m_count;
+			size_t pos = 0;
 			while (temp_count != 0)
 			{
-				col = getCol(stack_of_undos);
+				int temp_col = getCol(stack_of_undos);
 				stack_of_undos.top()->m_col.pop();
 
-				size_t pos = 0;
-				if (stack_of_undos.top()->m_col.empty() || (col - 1) == getCol(stack_of_undos))
+				if (stack_of_undos.top()->m_col.empty() || (temp_col + 1) == getCol(stack_of_undos))
 				{
 					text += getCh(stack_of_undos);
 					stack_of_undos.top()->m_ch.pop();
@@ -126,7 +120,7 @@ StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string
 					text.insert(pos, 1, getCh(stack_of_undos));
 					stack_of_undos.top()->m_ch.pop();
 				}
-
+				
 				temp_count--;
 			}
 		}
