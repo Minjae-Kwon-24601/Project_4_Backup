@@ -203,9 +203,9 @@ void StudentTextEditor::backspace()
 
 void StudentTextEditor::insert(char ch) 
 {
-	if (ch == 9)								// if the character is a tab key
+	if (ch == '\t')								// if the character is a tab key
 	{
-		(*it)->insert(m_col, 4, ch);			// insert 4 spaces at the position of the cursor
+		(*it)->insert(m_col, 4, ' ');			// insert 4 spaces at the position of the cursor
 		m_col = m_col + 4;						// and move the cursor 4 spots to the right
 	}
 	else
@@ -283,8 +283,8 @@ void StudentTextEditor::undo()
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
-		(*it)->erase(col - 1, m_count);
-		m_col = col - 1;
+		(*it)->erase(col, m_count);
+		m_col = col;
 		m_row = row;
 	}
 	else if (temp == Undo::Action::INSERT)
@@ -299,10 +299,10 @@ void StudentTextEditor::undo()
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
-		string temp = *(*it);							// store the current line in a string
+		it++;
 		delete* it;
-		it = m_text.erase(it);							// delete the line and move to the next line								
-		(*it)->insert(0, temp);							// concatenate the stored string onto the beginning of the line
+		it = m_text.erase(it);							// delete the line and move to the next line	
+		it--;
 		m_col = col;
 		m_row = row;
 	}
