@@ -278,7 +278,8 @@ void StudentTextEditor::undo()
 {
 	int row, col, m_count;
 	string chars_to_redo;
-	if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::DELETE)
+	Undo::Action temp = getUndo()->get(row, col, m_count, chars_to_redo);
+	if (temp == Undo::Action::DELETE)
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
@@ -286,7 +287,7 @@ void StudentTextEditor::undo()
 		m_col = col - 1;
 		m_row = row;
 	}
-	else if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::INSERT)
+	else if (temp == Undo::Action::INSERT)
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
@@ -294,7 +295,7 @@ void StudentTextEditor::undo()
 		m_col = col;
 		m_row = row;
 	}
-	else if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::JOIN)
+	else if (temp == Undo::Action::JOIN)
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
@@ -305,7 +306,7 @@ void StudentTextEditor::undo()
 		m_col = col;
 		m_row = row;
 	}
-	else if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::SPLIT)
+	else if (temp == Undo::Action::SPLIT)
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
