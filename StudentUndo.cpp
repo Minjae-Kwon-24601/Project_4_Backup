@@ -14,10 +14,19 @@ void StudentUndo::submit(const Action action, int row, int col, char ch)
 	if (!stack_of_undos.empty())								// if the stack is not empty
 	{
 		int col_check = stack_of_undos.top()->m_col.top();
+		char ch_check = stack_of_undos.top()->m_ch.top();
 		Action action_check = stack_of_undos.top()->m_action.top();
 		if (action == Action::INSERT)
 		{
 			if (col_check == (col - 1) && action_check == Action::INSERT)
+			{
+				stack_of_undos.top()->m_action.push(action);
+				stack_of_undos.top()->m_col.push(col);
+				stack_of_undos.top()->m_row.push(row);
+				stack_of_undos.top()->m_ch.push(ch);
+				stack_of_undos.top()->m_count++;
+			}
+			else if (ch == '\t' && col_check == (col - 4) && action_check == Action::INSERT)
 			{
 				stack_of_undos.top()->m_action.push(action);
 				stack_of_undos.top()->m_col.push(col);
@@ -63,14 +72,21 @@ StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string
 		col = getCol(stack_of_undos);
 		if (stack_of_undos.top()->m_count != 1)
 		{
-			count = stack_of_undos.top()->m_count;
 			int temp_count = stack_of_undos.top()->m_count;
-			while (temp_count != 1)
+			count = stack_of_undos.top()->m_count;
+			while (temp_count != 0)
 			{
+				if (stack_of_undos.top()->m_ch.top() == '\t')
+				{
+					count += 3;
+					col = getCol(stack_of_undos) - 4;
+				}
+				else
+					col = getCol(stack_of_undos) - 1;
+				stack_of_undos.top()->m_ch.pop();
 				stack_of_undos.top()->m_col.pop();
 				temp_count--;
 			}
-			col = getCol(stack_of_undos);
 		}
 
 		stack_of_undos.pop();
@@ -139,6 +155,7 @@ void StudentUndo::clear()
 		stack_of_undos.pop();				
 	}
 }
+
 
 void StudentUndo::createNewUndo(stack<UndoInfo*>& undos, const Action action, int row, int col, char ch)
 {
