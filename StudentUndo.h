@@ -23,6 +23,7 @@ private:
 	};
 
 	std::stack<UndoInfo*> stack_of_undos;
+	void createNewUndo(std::stack<UndoInfo*>& undos, const Action action, int row, int col, char ch);
 	int getRow(std::stack<UndoInfo*>& undos);
 	int getCol(std::stack<UndoInfo*>& undos);
 	char getCh(std::stack<UndoInfo*>& undos);
