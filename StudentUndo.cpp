@@ -96,7 +96,15 @@ StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string
 	if (stack_of_undos.top()->m_action.top() == Action::DELETE)
 	{
 		row = getRow(stack_of_undos);
-		col = getCol(stack_of_undos);
+		row = getRow(stack_of_undos);
+		if (stack_of_undos.top()->m_ch.top() == '\t')
+		{
+			count += 3;
+			col = getCol(stack_of_undos) - 4;
+		}
+		else
+			col = getCol(stack_of_undos) - 1;
+		
 		if (stack_of_undos.top()->m_count != 1)
 		{
 			count = stack_of_undos.top()->m_count;
