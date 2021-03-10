@@ -156,7 +156,9 @@ void StudentTextEditor::del()
 	{
 		if (m_col < (*it)->size())
 		{
+			char temp_char = (*(*it))[m_col];				// stores the character that will be deleted
 			(*it)->erase(m_col, 1);							// deletes the char that the cursor is pointing at
+			getUndo()->submit(Undo::Action::DELETE, m_row, m_col, temp_char);		// store the change in the Undo pointer, happens every time submit is called 
 		}
 		else if (m_col == (*it)->size())					// if the cursor points just past the end of the line
 		{
@@ -164,9 +166,8 @@ void StudentTextEditor::del()
 			delete* it;
 			it = m_text.erase(it);							// delete the line and move to the next line								
 			(*it)->insert(0, temp);							// concatenate the stored string onto the beginning of the line
-		}
-
-		// MAKE SURE TO NOTIFY UNDO LATER
+			getUndo()->submit(Undo::Action::JOIN, m_row, m_col);					
+		}	
 	}
 }
 
@@ -180,8 +181,11 @@ void StudentTextEditor::backspace()
 	{
 		if (m_col > 0)
 		{
-			(*it)->erase(m_col - 1, 1);					// deletes the char at the position before the cursor
+			size_t pos = m_col - 1;
+			char temp_char = (*(*it))[pos];				// stores the character that will be deleted
+			(*it)->erase(pos, 1);						// deletes the char at the position before the cursor
 			m_col--;									// and then decrements the position of the cursor
+			getUndo()->submit(Undo::Action::DELETE, m_row, m_col, temp_char);		
 		}
 		else if (m_row > 0 && m_col == 0)				// if it is not the first row and the cursor is at the beginning of the line
 		{
@@ -192,9 +196,8 @@ void StudentTextEditor::backspace()
 			m_row--;									
 			m_col = (*it)->size();						// delete the current line and point the cursor just past the end of the line above
 			*(*it) += temp;								// concatenate the stored string onto the line above
+			getUndo()->submit(Undo::Action::JOIN, m_row, m_col);
 		}
-
-		// MAKE SURE TO NOTIFY UNDO LATER
 	}
 }
 
@@ -211,11 +214,13 @@ void StudentTextEditor::insert(char ch)
 		m_col++;								// increments the position of the cursor
 	}
 
-	// MAKE SURE TO NOTIFY UNDO LATER
+	getUndo()->submit(Undo::Action::INSERT, m_row, m_col, ch);
 }
 
 void StudentTextEditor::enter() 
 {
+	int temp_row = m_row;
+	int temp_col = m_col;
 	string substring = (*it)->substr(m_col);	// store the substring from the cursor to the end of the current line
 	(*it)->erase(m_col);						// erase that substring from the current line so it can be added to the next line
 	it++;
@@ -230,7 +235,7 @@ void StudentTextEditor::enter()
 	else
 		m_col = 0;
 
-	// MAKE SURE TO NOTIFY UNDO LATER
+	getUndo()->submit(Undo::Action::SPLIT, temp_row, temp_col);
 }
 
 void StudentTextEditor::getPos(int& row, int& col) const 
@@ -269,6 +274,49 @@ int StudentTextEditor::getLines(int startRow, int numRows, std::vector<std::stri
 	}
 }
 
-void StudentTextEditor::undo() {
-	// TODO
+void StudentTextEditor::undo() 
+{
+	int row, col, m_count;
+	string chars_to_redo;
+	if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::DELETE)
+	{
+		int move_cursor = row - m_row;
+		advance(it, move_cursor);
+		(*it)->erase(m_col - m_count, m_count);
+		m_col = col - 1;
+		m_row = row;
+	}
+	if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::INSERT)
+	{
+		int move_cursor = row - m_row;
+		advance(it, move_cursor);
+		(*it)->insert(m_col, chars_to_redo);
+		m_col = col;
+		m_row = row;
+	}
+	if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::JOIN)
+	{
+		int move_cursor = row - m_row;
+		advance(it, move_cursor);
+		string temp = *(*it);							// store the current line in a string
+		delete* it;
+		it = m_text.erase(it);							// delete the line and move to the next line								
+		(*it)->insert(0, temp);							// concatenate the stored string onto the beginning of the line
+		m_col = col;
+		m_row = row;
+	}
+	if (getUndo()->get(row, col, m_count, chars_to_redo) == Undo::Action::SPLIT)
+	{
+		int move_cursor = row - m_row;
+		advance(it, move_cursor);
+		m_col = col;
+		m_row = row;
+		string substring = (*it)->substr(m_col);	// store the substring from the cursor to the end of the current line
+		(*it)->erase(m_col);						// erase that substring from the current line so it can be added to the next line
+		it++;
+		m_text.insert(it, new string);				// insert a new line 
+		advance(it, -2);
+		if (substring != "")						// if the substring is not empty
+			*(*it) += substring;					// add it to the beginning of the new line
+	}
 }
