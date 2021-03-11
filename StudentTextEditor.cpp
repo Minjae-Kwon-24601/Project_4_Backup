@@ -274,39 +274,41 @@ int StudentTextEditor::getLines(int startRow, int numRows, std::vector<std::stri
 	}
 }
 
+// checks what the returned action from the undo class is and does the appropriate action
 void StudentTextEditor::undo() 
 {
 	int row, col, m_count;
 	string chars_to_redo;
 	Undo::Action temp = getUndo()->get(row, col, m_count, chars_to_redo);
-	if (temp == Undo::Action::DELETE)
+
+	if (temp == Undo::Action::DELETE)					// if the returned action was deletion						 
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
-		(*it)->erase(col, m_count);
+		(*it)->erase(col, m_count);						// move the iterator to the correct row
 		m_col = col;
-		m_row = row;
+		m_row = row;									// move the cursor to the right position
 	}
-	else if (temp == Undo::Action::INSERT)
+	else if (temp == Undo::Action::INSERT)				// if the returned action was insertion
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
-		(*it)->insert(m_col, chars_to_redo);
+		(*it)->insert(col, chars_to_redo);				// move the iterator to the correct row
 		m_col = col;
-		m_row = row;
+		m_row = row;									// move the cursor to the right position
 	}
-	else if (temp == Undo::Action::JOIN)
+	else if (temp == Undo::Action::JOIN)				// if the returned action was join
 	{
 		int move_cursor = row - m_row;
-		advance(it, move_cursor);
+		advance(it, move_cursor);						// move the iterator to the correct row
 		it++;
 		delete* it;
 		it = m_text.erase(it);							// delete the line and move to the next line	
 		it--;
 		m_col = col;
-		m_row = row;
+		m_row = row;									// move the cursor to the right position
 	}
-	else if (temp == Undo::Action::SPLIT)
+	else if (temp == Undo::Action::SPLIT)			// if the returned action was a split
 	{
 		int move_cursor = row - m_row;
 		advance(it, move_cursor);
