@@ -8,14 +8,21 @@
 
 class StudentSpellCheck : public SpellCheck {
 public:
-    StudentSpellCheck() { }
+	StudentSpellCheck();
 	virtual ~StudentSpellCheck();
 	bool load(std::string dict_file);
 	bool spellCheck(std::string word, int maxSuggestions, std::vector<std::string>& suggestions);
 	void spellCheckLine(const std::string& line, std::vector<Position>& problems);
 
 private:
+	struct Node
+	{
+		char value;
+		bool is_leaf = false;
+		std::vector<Node*> trie_DS;
+	};
 
+	Node dummy;
 };
 
 #endif  // STUDENTSPELLCHECK_H_
