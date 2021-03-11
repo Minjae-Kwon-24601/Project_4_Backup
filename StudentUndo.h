@@ -7,7 +7,6 @@
 
 class StudentUndo : public Undo {
 public:
-
 	void submit(Action action, int row, int col, char ch = 0);
 	Action get(int& row, int& col, int& count, std::string& text);
 	void clear();
