@@ -14,7 +14,6 @@ void StudentUndo::submit(const Action action, int row, int col, char ch)
 	if (!stack_of_undos.empty())								// if the stack is not empty
 	{
 		int col_check = stack_of_undos.top()->m_col.top();
-		char ch_check = stack_of_undos.top()->m_ch.top();
 		Action action_check = stack_of_undos.top()->m_action.top();				
 		if (action == Action::INSERT)																// check if the last action was an insertion
 		{
@@ -101,8 +100,7 @@ StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string
 		stack_of_undos.pop();
 		return Action::DELETE;												// and return the action to delete
 	}
-
-	if (stack_of_undos.top()->m_action.top() == Action::DELETE)				// if the last undo submission was a deletion
+	else if (stack_of_undos.top()->m_action.top() == Action::DELETE)		// if the last undo submission was a deletion
 	{
 		row = getRow(stack_of_undos);
 		col = getCol(stack_of_undos);
@@ -140,8 +138,7 @@ StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string
 		stack_of_undos.pop();
 		return Action::INSERT;											// and return the action to insert
 	}
-
-	if (stack_of_undos.top()->m_action.top() == Action::SPLIT)			// if the last undo submission was a split
+	else if (stack_of_undos.top()->m_action.top() == Action::SPLIT)		// if the last undo submission was a split
 	{
 		row = getRow(stack_of_undos);
 		col = getCol(stack_of_undos);									// get the correct row and col position
@@ -150,8 +147,7 @@ StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string
 		stack_of_undos.pop();
 		return Action::JOIN;											// and return the action to join
 	}
-
-	if (stack_of_undos.top()->m_action.top() == Action::JOIN)			// if the last undo submission was a split
+	else																// if the last undo submission was a split
 	{
 		row = getRow(stack_of_undos);
 		col = getCol(stack_of_undos);									// get the correct row and col position
@@ -160,6 +156,8 @@ StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string
 		stack_of_undos.pop();
 		return Action::SPLIT;											// and return the action to split
 	}
+
+	
 }
 
 // removes all the undo operations that were stored
