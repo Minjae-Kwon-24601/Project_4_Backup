@@ -18,11 +18,12 @@ private:
 	struct Node
 	{
 		char value;
-		bool is_leaf = false;
 		std::vector<Node*> trie_DS;
 	};
 
 	Node dummy;
+	void clearWords(Node* cur);
+	bool checkWord(std::string to_check);
 };
 
 #endif  // STUDENTSPELLCHECK_H_
