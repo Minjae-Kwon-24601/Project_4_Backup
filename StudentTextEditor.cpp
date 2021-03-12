@@ -318,8 +318,9 @@ void StudentTextEditor::undo()
 		(*it)->erase(m_col);						// erase that substring from the current line so it can be added to the next line
 		it++;
 		m_text.insert(it, new string);				// insert a new line 
-		advance(it, -2);
+		it--;
 		if (substring != "")						// if the substring is not empty
 			*(*it) += substring;					// add it to the beginning of the new line
+		it--;
 	}
 }
